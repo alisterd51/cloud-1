@@ -4,4 +4,4 @@
   become: true
   roles:
     - role: "docker"
-      docker_install: yes
+      docker_install: true
