@@ -1,6 +1,6 @@
 ---
 - name: "Installation docker"
-  hosts: node1
+  hosts: node2
   become: true
   roles:
     - role: "docker"
