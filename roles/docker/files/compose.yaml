@@ -1,0 +1,83 @@
+services:
+  traefik:
+    image: traefik:2.10
+    container_name: traefik
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    restart: always
+    environment:
+      TZ: ${TZ}
+      OVH_ENDPOINT: ${OVH_ENDPOINT}
+      OVH_APPLICATION_KEY: ${OVH_APPLICATION_KEY}
+      OVH_APPLICATION_SECRET: ${OVH_APPLICATION_SECRET}
+      OVH_CONSUMER_KEY: ${OVH_CONSUMER_KEY}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/acme:/acme:rw
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/conf:/conf:ro
+    ports:
+      - "80:80"
+      - "443:443/tcp"
+      - "443:443/udp"
+    networks:
+      - backend_network
+
+  wordpress:
+    image: wordpress:php8.2
+    container_name: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db-wordpress
+      WORDPRESS_DB_USER: ${WORDPRESS_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB}
+    networks:
+      - backend_network
+    depends_on:
+      - mysql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wordpress.rule=Host(`wordpress.${DOMAIN}`)"
+      - "traefik.http.routers.wordpress.entrypoints=web-secure"
+      - "traefik.http.routers.wordpress.tls.certresolver=certificato"
+      - "traefik.http.routers.wordpress.tls.domains[0].main=*.${DOMAIN}"
+
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - backend_network
+    depends_on:
+      - mysql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.${DOMAIN}`)"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web-secure"
+      - "traefik.http.routers.phpmyadmin.tls.certresolver=certificato"
+      - "traefik.http.routers.phpmyadmin.tls.domains[0].main=*.${DOMAIN}"
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${WORDPRESS_DB}
+      MYSQL_USER: ${WORDPRESS_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./wordpress/data:/var/lib/mysql
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    name: backend_network
+    external: false
