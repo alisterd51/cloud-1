@@ -42,3 +42,8 @@
 - name: Install Docker Module for Python
   ansible.builtin.pip:
     name: docker
+
+- name: Copy content of directory 'files'
+  copy:
+    src: files/
+    dest: /files/
