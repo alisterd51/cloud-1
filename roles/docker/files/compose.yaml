@@ -29,7 +29,7 @@ services:
     container_name: wordpress
     restart: always
     environment:
-      WORDPRESS_DB_HOST: db-wordpress
+      WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: ${WORDPRESS_USER}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_PASSWORD}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB}
