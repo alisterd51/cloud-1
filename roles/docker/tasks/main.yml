@@ -48,6 +48,12 @@
     src: files/
     dest: /files/
 
+- name: pull Docker Compose stack
+  ansible.builtin.shell:
+    cmd: "docker compose pull"
+    chdir: /files
+
 - name: deploy Docker Compose stack
-  community.docker.docker_compose:
-    project_src: /files
+  ansible.builtin.shell:
+    cmd: "docker compose up -d"
+    chdir: /files
