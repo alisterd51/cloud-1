@@ -44,6 +44,10 @@
     name: docker
 
 - name: Copy content of directory 'files'
-  copy:
+  ansible.builtin.copy:
     src: files/
     dest: /files/
+
+- name: deploy Docker Compose stack
+  community.docker.docker_compose:
+    project_src: /files
