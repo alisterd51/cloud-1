@@ -49,11 +49,11 @@
     dest: /files/
 
 - name: pull Docker Compose stack
-  ansible.builtin.shell:
+  command:
     cmd: "docker compose pull"
     chdir: /files
 
 - name: deploy Docker Compose stack
-  ansible.builtin.shell:
+  command:
     cmd: "docker compose up -d"
     chdir: /files
