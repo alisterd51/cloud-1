@@ -1,21 +1,11 @@
 ---
-- name: Install aptitude using apt
-  ansible.builtin.apt:
-    name: aptitude
-    state: present
-    update_cache: true
-    force_apt_get: true
-
+# tasks file for common
 - name: Install required system packages
   ansible.builtin.apt:
     name:
-      - 'apt-transport-https'
       - 'ca-certificates'
       - 'curl'
-      - 'software-properties-common'
-      - 'python3-pip'
-      - 'virtualenv'
-      - 'python3-setuptools'
+      - 'gnupg'
     state: present
     update_cache: true
 
@@ -24,9 +14,15 @@
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
 
+- name: Get DEB architecture
+  shell:
+    cmd: dpkg --print-architecture
+  register: deb_architecture
+
 - name: Add Docker Repository
   ansible.builtin.apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    repo: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    filename: docker
     state: present
 
 - name: Update apt and install docker-ce
@@ -36,24 +32,22 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+      - docker-buildx-plugin
       - docker-compose-plugin
     state: present
-
-- name: Install Docker Module for Python
-  ansible.builtin.pip:
-    name: docker
 
 - name: Copy content of directory 'files'
   ansible.builtin.copy:
     src: files/
     dest: /files/
+    mode: preserve
 
-- name: pull Docker Compose stack
-  command:
-    cmd: "docker compose pull"
+- name: Pull Docker Compose stack
+  shell:
+    cmd: docker compose pull
     chdir: /files
 
-- name: deploy Docker Compose stack
-  command:
-    cmd: "docker compose up -d"
+- name: Deploy Docker Compose stack
+  shell:
+    cmd: docker compose up -d
     chdir: /files

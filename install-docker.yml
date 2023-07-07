@@ -1,7 +1,0 @@
----
-- name: "Installation docker"
-  hosts: node2
-  become: true
-  roles:
-    - role: "docker"
-      docker_install: true
