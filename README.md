@@ -1,6 +1,9 @@
 # Cloud-1
 
 ```bash
+#install ansible
+sudo apt update && sudo apt install -y ansible
+
 # create roles/common/files/.env file
 
 # update /etc/hosts
