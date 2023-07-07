@@ -1,7 +1,12 @@
 # Cloud-1
 
 ```bash
-ansible webservers -i production -m ping --user=ubuntu
+# create roles/common/files/.env file
 
-ansible-playbook -i production site.yml --user=ubuntu
+# if we need a sudo password: --ask-become-pass
+# if we need other user: --user=ubuntu
+
+ansible webservers -i production -m ping
+
+ansible-playbook -i production site.yml
 ```
