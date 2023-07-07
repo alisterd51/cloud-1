@@ -37,8 +37,7 @@ services:
     networks:
       - backend_network
     depends_on:
-      - wordpress
-      - mysql:
+      mysql:
         condition: service_healthy
     command: >
       /bin/sh -c '
