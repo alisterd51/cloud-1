@@ -69,8 +69,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.wordpress.rule=Host(`wordpress.${DOMAIN}`)"
       - "traefik.http.routers.wordpress.entrypoints=web-secure"
+      - "traefik.http.routers.wordpress.tls=true"
       - "traefik.http.routers.wordpress.tls.certresolver=certificato"
-      - "traefik.http.routers.wordpress.tls.domains[0].main=*.${DOMAIN}"
 
   phpmyadmin:
     image: phpmyadmin:5.2
@@ -88,8 +88,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.${DOMAIN}`)"
       - "traefik.http.routers.phpmyadmin.entrypoints=web-secure"
+      - "traefik.http.routers.phpmyadmin.tls=true"
       - "traefik.http.routers.phpmyadmin.tls.certresolver=certificato"
-      - "traefik.http.routers.phpmyadmin.tls.domains[0].main=*.${DOMAIN}"
 
   mysql:
     image: mysql:8

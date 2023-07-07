@@ -23,7 +23,6 @@ certificatesResolvers:
     acme:
       email: antoinereims28@gmail.com
       storage: /acme/acme.json
-      dnschallenge:
-        provider: ovh
-        delaybeforecheck: 10
-      caserver: https://acme-v01.api.letsencrypt.org/directory
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
