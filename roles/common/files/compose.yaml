@@ -38,6 +38,8 @@ services:
       - backend_network
     depends_on:
       - wordpress
+      - mysql:
+        condition: service_healthy
     command: >
       /bin/sh -c '
       sleep 10;
@@ -104,6 +106,10 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - backend_network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
 
 networks:
   backend_network:
